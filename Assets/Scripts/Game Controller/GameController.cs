@@ -20,24 +20,7 @@ public class GameController : MonoBehaviour
         systemHolder = transform.GetChild(0).gameObject;
         GameFactory.Create(this);
     }
-    #endregion
-
-    public void InstantiateSystems<T>() where T : GameSystem, IGameSystem, new()
-    {
-        GameSystem gameSystem = GetComponentInChildren<T>() as GameSystem;
-
-        if (gameSystem == null)
-        {
-            GameObject gameSystemObj = Instantiate(Resources.Load<GameObject>($"{SYSTEMS_PATH}{typeof(T).Name}"), systemHolder.gameObject.transform);
-            gameSystem = gameSystemObj.GetComponent<GameSystem>();
-        }
-
-        Debug.Log($"Add System: {typeof(T).Name}");
-        gameSystems.Add(typeof(T).Name, gameSystem);
-
-        
-    }
-
+    
     private void Start()
     {
         Debug.Log($"Get System {GetSystem<MovementSystem>().name}");
@@ -55,6 +38,21 @@ public class GameController : MonoBehaviour
 
         foreach (IGameSystem system in GetSystems())
             system.PhysicsRoutine();
+    }
+    #endregion
+
+    public void InstantiateSystems<T>() where T : GameSystem, IGameSystem, new()
+    {
+        GameSystem gameSystem = GetComponentInChildren<T>() as GameSystem;
+
+        if (gameSystem == null)
+        {
+            GameObject gameSystemObj = Instantiate(Resources.Load<GameObject>($"{SYSTEMS_PATH}{typeof(T).Name}"), systemHolder.gameObject.transform);
+            gameSystem = gameSystemObj.GetComponent<GameSystem>();
+        }
+
+        Debug.Log($"Add System: {typeof(T).Name}");
+        gameSystems.Add(typeof(T).Name, gameSystem);        
     }
 
     public T GetSystem<T>() where T : GameSystem
